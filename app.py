@@ -1,42 +1,72 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-============================================================
-FREE FIRE BOT - BACKEND API
-============================================================
-Chạy bot từ web interface
+FREE FIRE BOT - BACKEND API (CHO RENDER)
 """
 
 import asyncio
 import json
 import sys
 import os
-from flask import Flask, request, Response, jsonify
-from flask_cors import CORS
 import traceback
+import threading
+import queue
+from flask import Flask, request, Response, jsonify, send_from_directory
+from flask_cors import CORS
 
 # Import các file của bạn
-from accessbanGUESTID import CompleteBot as GuestBot
-from accessbanFACEBOOK import CompleteBot as FBBot
-from accessbanGOOGLE import CompleteBot as GoogleBot
+try:
+    from accessbanGUESTID import CompleteBot as GuestBot
+    from accessbanFACEBOOK import CompleteBot as FBBot
+    from accessbanGOOGLE import CompleteBot as GoogleBot
+except ImportError as e:
+    print(f"⚠️ Lỗi import: {e}")
+    # Tạo class giả nếu chưa có file
+    class GuestBot:
+        async def run(self): return False
+        async def cleanup(self): pass
+    class FBBot:
+        async def run(self): return False
+        async def cleanup(self): pass
+    class GoogleBot:
+        async def run(self): return False
+        async def cleanup(self): pass
 
-app = Flask(__name__)
-CORS(app)  # Cho phép mọi domain gọi API
+app = Flask(__name__, static_folder='.')
+CORS(app)
 
+# ============================================
+# ROUTES
+# ============================================
 
 @app.route('/')
 def index():
-    """Trả về trang chủ"""
+    """Trang chủ"""
     return '''
-    <h1>🔥 Free Fire Bot API</h1>
-    <p>Đang chạy... Gửi POST tới /run để chạy bot</p>
-    <p>Hoặc mở <a href="/static/index.html">index.html</a></p>
+    <!DOCTYPE html>
+    <html>
+    <head><title>🔥 Free Fire Bot</title></head>
+    <body style="font-family:Arial;text-align:center;padding:50px;background:#0a0a0a;color:#fff;">
+        <h1 style="color:#ff4500;">🔥 Free Fire Bot</h1>
+        <p>API đang chạy!</p>
+        <p>Gửi POST tới <code>/run</code> để chạy bot</p>
+        <hr>
+        <p style="color:#666;font-size:12px;">Made with ❤️</p>
+    </body>
+    </html>
     '''
 
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    """Phục vụ file tĩnh"""
+    return send_from_directory('.', filename)
 
-@app.route('/run', methods=['POST'])
+@app.route('/run', methods=['POST', 'OPTIONS'])
 def run_bot():
     """API chạy bot"""
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     try:
         data = request.get_json()
         if not data:
@@ -45,10 +75,6 @@ def run_bot():
         mode = data.get('mode', 'token')
         
         def generate():
-            """Generator để stream log ra client"""
-            import queue
-            import threading
-            
             log_queue = queue.Queue()
             
             def send_log(message, type='info'):
@@ -56,18 +82,23 @@ def run_bot():
             
             def run_async_bot():
                 try:
-                    # Tạo event loop mới
                     loop = asyncio.new_event_loop()
                     asyncio.set_event_loop(loop)
+                    
+                    send_log('🚀 Đang khởi chạy bot...', 'info')
                     
                     if mode == 'token':
                         token = data.get('token')
                         openid = data.get('openid')
-                        send_log(f'🔑 Đang chạy với Access Token: {token[:20]}...', 'info')
                         
+                        if not token:
+                            send_log('❌ Thiếu Access Token!', 'error')
+                            return
+                            
+                        send_log(f'🔑 Token: {token[:20]}...', 'info')
+                        
+                        # Thử lấy open_id từ token
                         if not openid:
-                            send_log('⚠️ Không có Open ID, thử lấy từ token...', 'warning')
-                            # Thử lấy open_id từ token
                             import requests
                             try:
                                 resp = requests.get(
@@ -80,11 +111,11 @@ def run_bot():
                                     openid = data_resp.get('open_id')
                                     if openid:
                                         send_log(f'✅ Lấy được Open ID: {openid[:16]}...', 'success')
-                            except:
-                                pass
+                            except Exception as e:
+                                send_log(f'⚠️ Không lấy được Open ID: {e}', 'warning')
                         
                         if not openid:
-                            send_log('❌ Không có Open ID!', 'error')
+                            send_log('❌ Không có Open ID! Vui lòng nhập thủ công', 'error')
                             return
                             
                         bot = GuestBot(access_token=token, open_id=openid)
@@ -94,7 +125,11 @@ def run_bot():
                         password = data.get('password')
                         platform = data.get('platform', 'guest')
                         
-                        send_log(f'👤 Đang chạy Guest Login ({platform})', 'info')
+                        if not uid or not password:
+                            send_log('❌ Thiếu UID hoặc Password!', 'error')
+                            return
+                            
+                        send_log(f'👤 Guest Login ({platform})', 'info')
                         send_log(f'   UID: {uid}', 'info')
                         
                         if platform == 'facebook':
@@ -104,10 +139,7 @@ def run_bot():
                         else:
                             bot = GuestBot(uid=uid, password=password)
                     
-                    # Chạy bot
-                    send_log('🚀 Đang kết nối...', 'info')
-                    
-                    # Override print để capture log
+                    # Override print
                     import builtins
                     original_print = builtins.print
                     
@@ -133,17 +165,17 @@ def run_bot():
                     send_log(traceback.format_exc(), 'error')
                 finally:
                     send_log('🏁 Bot đã dừng', 'info')
-                    log_queue.put(None)  # Signal kết thúc
+                    log_queue.put(None)
             
-            # Chạy bot trong thread riêng
+            # Chạy bot trong thread
             thread = threading.Thread(target=run_async_bot)
             thread.daemon = True
             thread.start()
             
-            # Stream log từ queue
+            # Stream log
             while True:
                 try:
-                    log = log_queue.get(timeout=1)
+                    log = log_queue.get(timeout=2)
                     if log is None:
                         break
                     yield log
@@ -151,26 +183,27 @@ def run_bot():
                     yield json.dumps({"message": "⏳ Đang chạy...", "type": "info"}) + '\n'
                     continue
                     
-        return Response(generate(), mimetype='text/plain')
+        return Response(generate(), mimetype='text/plain', headers={
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-cache'
+        })
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/health', methods=['GET'])
 def health():
-    """Kiểm tra sức khỏe"""
-    return jsonify({"status": "ok"})
+    return jsonify({"status": "ok", "version": "3.0"})
 
+# ============================================
+# CHẠY
+# ============================================
 
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
     print("="*60)
-    print("🔥 FREE FIRE BOT - BACKEND SERVER")
+    print("🔥 FREE FIRE BOT - BACKEND API")
     print("="*60)
-    print("📌 Địa chỉ: http://localhost:5000")
-    print("📌 Mở index.html để dùng giao diện")
+    print(f"📌 Port: {port}")
     print("="*60)
-    print("⚠️  Nhấn Ctrl+C để dừng")
-    print("="*60)
-    
-    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+    app.run(host='0.0.0.0', port=port, debug=False)
