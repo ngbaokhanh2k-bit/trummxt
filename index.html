@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Free Fire Bot - Ultimate Tool</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+               RESET & BASE
+               ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: 
+                radial-gradient(ellipse at 10% 20%, rgba(255, 69, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(255, 69, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0.9) 0%, #0a0a0a 100%);
+        }
+        
+        /* ============================================
+               MAIN CONTAINER
+               ============================================ */
+        .container {
+            width: 100%;
+            max-width: 520px;
+            background: linear-gradient(145deg, #141414, #1a1a1a);
+            border-radius: 28px;
+            padding: 40px 35px;
+            border: 1px solid rgba(255, 69, 0, 0.2);
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff4500, #ff6a00, #ff4500);
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0.3;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* ============================================
+               HEADER
+               ============================================ */
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 32px;
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 40px rgba(255, 69, 0, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .logo i {
+            -webkit-text-fill-color: initial;
+            color: #ff4500;
+            margin-right: 8px;
+            font-size: 30px;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 13px;
+            margin-top: 6px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            margin-top: 12px;
+            background: rgba(255, 69, 0, 0.15);
+            color: #ff6a00;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255, 69, 0, 0.2);
+        }
+        
+        /* ============================================
+               TABS
+               ============================================ */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 28px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 10px 8px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .tab-btn i {
+            font-size: 14px;
+        }
+        
+        .tab-btn:hover {
+            color: #aaa;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ff4500, #ff6a00);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(255, 69, 0, 0.3);
+        }
+        
+        /* ============================================
+               FORM
+               ============================================ */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #aaa;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        
+        .form-group .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .form-group .input-wrapper:focus-within {
+            border-color: #ff4500;
+            box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        
+        .form-group .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 14px 14px 42px;
+            background: transparent;
+            border: none;
+            color: #eee;
+            font-size: 14px;
+            font-family: 'Roboto', sans-serif;
+            outline: none;
+            border-radius: 12px;
+        }
+        
+        .form-group textarea {
+            padding: 14px;
+            padding-left: 42px;
+            min-height: 70px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #444;
+        }
+        
+        .form-group .input-wrapper .toggle-visibility {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: #555;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            transition: color 0.3s;
+        }
+        
+        .form-group .input-wrapper .toggle-visibility:hover {
+            color: #aaa;
+        }
+        
+        /* ============================================
+               HIDDEN FIELDS (Guest)
+               ============================================ */
+        .guest-fields {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .guest-fields.visible {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ============================================
+               BUTTONS
+               ============================================ */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #ff4500, #ff6a00);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 69, 0, 0.4);
+        }
+        
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-primary .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        
+        .btn-primary.loading .spinner {
+            display: block;
+        }
+        
+        .btn-primary.loading .btn-text {
+            display: none;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ============================================
+               RESULT / LOG
+               ============================================ */
+        .result-area {
+            margin-top: 22px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .result-area.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .result-area .log-line {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 3px 0;
+            color: #aaa;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .result-area .log-line.success {
+            color: #00ff88;
+        }
+        
+        .result-area .log-line.error {
+            color: #ff4444;
+        }
+        
+        .result-area .log-line.warning {
+            color: #ffaa00;
+        }
+        
+        .result-area .log-line.info {
+            color: #44aaff;
+        }
+        
+        .result-area::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .result-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .result-area::-webkit-scrollbar-thumb {
+            background: #ff4500;
+            border-radius: 10px;
+        }
+        
+        /* ============================================
+               QUICK TOKENS
+               ============================================ */
+        .quick-tokens {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .quick-tokens .token-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .quick-tokens .token-chip:hover {
+            background: rgba(255, 69, 0, 0.1);
+            border-color: rgba(255, 69, 0, 0.3);
+            color: #ff8c00;
+        }
+        
+        /* ============================================
+               FOOTER
+               ============================================ */
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            color: #333;
+            font-size: 11px;
+        }
+        
+        .footer a {
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer a:hover {
+            color: #ff6a00;
+        }
+        
+        /* ============================================
+               RESPONSIVE
+               ============================================ */
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 18px;
+                border-radius: 20px;
+            }
+            
+            .logo {
+                font-size: 24px;
+            }
+            
+            .tab-btn {
+                font-size: 11px;
+                padding: 8px 4px;
+            }
+            
+            .tab-btn i {
+                font-size: 12px;
+            }
+            
+            .form-group input,
+            .form-group textarea {
+                font-size: 13px;
+                padding: 12px 12px 12px 36px;
+            }
+            
+            .btn-primary {
+                font-size: 14px;
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+    MAIN CONTAINER
+    ========================================== -->
+    <div class="container">
+        
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-fire-flame-curved"></i> FF BOT
+            </div>
+            <div class="subtitle">Ultimate Free Fire Tool</div>
+            <div class="status-badge">
+                <i class="fas fa-circle" style="color: #00ff88; font-size: 8px;"></i> READY
+            </div>
+        </div>
+        
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="token" onclick="switchTab('token')">
+                <i class="fas fa-key"></i> Token
+            </button>
+            <button class="tab-btn" data-tab="guest" onclick="switchTab('guest')">
+                <i class="fas fa-user"></i> Guest
+            </button>
+        </div>
+        
+        <!-- ==========================================
+        FORM
+        ========================================== -->
+        <form id="botForm" onsubmit="runBot(event)">
+            
+            <!-- TAB: TOKEN -->
+            <div id="tab-token" class="tab-content">
+                <div class="form-group">
+                    <label><i class="fas fa-key"></i> Access Token</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="text" id="tokenInput" placeholder="Nhập Access Token của bạn..." value="">
+                        <button type="button" class="toggle-visibility" onclick="toggleVisibility('tokenInput')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-id-card"></i> Open ID</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-id-badge"></i>
+                        <input type="text" id="openidInput" placeholder="Nhập Open ID (nếu có)">
+                    </div>
+                </div>
+                
+                <!-- Quick Tokens -->
+                <div class="quick-tokens" id="quickTokens">
+                    <span style="color:#444; font-size:10px; width:100%; margin-bottom:4px;">
+                        <i class="fas fa-clock"></i> Token gần đây:
+                    </span>
+                </div>
+            </div>
+            
+            <!-- TAB: GUEST -->
+            <div id="tab-guest" class="tab-content" style="display:none;">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Guest UID</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-hashtag"></i>
+                        <input type="text" id="uidInput" placeholder="Nhập Guest UID">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Guest Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-shield"></i>
+                        <input type="password" id="passInput" placeholder="Nhập Guest Password">
+                        <button type="button" class="toggle-visibility" onclick="toggleVisibility('passInput')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-globe"></i> Platform</label>
+                    <div class="input-wrapper" style="padding:0; background:transparent; border:none;">
+                        <select id="platformSelect" style="width:100%; padding:14px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:12px; color:#eee; font-size:14px; outline:none; font-family:'Roboto',sans-serif;">
+                            <option value="guest">Guest (Mặc định)</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="google">Google</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SUBMIT -->
+            <button type="submit" class="btn-primary" id="runBtn">
+                <span class="btn-text"><i class="fas fa-play"></i> CHẠY BOT</span>
+                <div class="spinner"></div>
+            </button>
+            
+        </form>
+        
+        <!-- RESULT AREA -->
+        <div class="result-area" id="resultArea">
+            <div id="logContainer"></div>
+        </div>
+        
+        <!-- QUICK ACTIONS -->
+        <div style="display:flex; gap:10px; margin-top:14px;">
+            <button onclick="clearLogs()" style="flex:1; padding:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:10px; color:#555; cursor:pointer; font-size:12px; transition:all 0.3s;">
+                <i class="fas fa-eraser"></i> Xóa Log
+            </button>
+            <button onclick="saveToken()" style="flex:1; padding:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:10px; color:#555; cursor:pointer; font-size:12px; transition:all 0.3s;">
+                <i class="fas fa-save"></i> Lưu Token
+            </button>
+        </div>
+        
+        <!-- FOOTER -->
+        <div class="footer">
+            Made with <i class="fas fa-heart" style="color:#ff4500;"></i> by Unknown<br>
+            <span style="color:#222;">v3.0 | Chỉ dùng cho mục đích học tập</span>
+        </div>
+    </div>
+
+    <!-- ==========================================
+    JAVASCRIPT
+    ========================================== -->
+    <script>
+        // ==========================================
+        // STATE
+        // ==========================================
+        let isRunning = false;
+        let logLines = [];
+        
+        // ==========================================
+        // TAB SWITCH
+        // ==========================================
+        function switchTab(tab) {
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+            
+            // Show/hide content
+            document.getElementById('tab-token').style.display = tab === 'token' ? 'block' : 'none';
+            document.getElementById('tab-guest').style.display = tab === 'guest' ? 'block' : 'none';
+        }
+        
+        // ==========================================
+        // TOGGLE PASSWORD VISIBILITY
+        // ==========================================
+        function toggleVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            
+            const wrapper = input.closest('.input-wrapper');
+            const icon = wrapper.querySelector('.toggle-visibility i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else if (input.type === 'text' && inputId === 'passInput') {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            } else {
+                // For token input, just toggle type between text/password
+                if (input.type === 'text') {
+                    input.type = 'password';
+                    icon.className = 'fas fa-eye';
+                } else {
+                    input.type = 'text';
+                    icon.className = 'fas fa-eye-slash';
+                }
+            }
+        }
+        
+        // ==========================================
+        // ADD LOG
+        // ==========================================
+        function addLog(message, type = 'info') {
+            const container = document.getElementById('logContainer');
+            const div = document.createElement('div');
+            div.className = `log-line ${type}`;
+            
+            const time = new Date().toLocaleTimeString();
+            div.textContent = `[${time}] ${message}`;
+            
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            
+            // Show result area
+            document.getElementById('resultArea').classList.add('visible');
+        }
+        
+        function clearLogs() {
+            document.getElementById('logContainer').innerHTML = '';
+            document.getElementById('resultArea').classList.remove('visible');
+        }
+        
+        // ==========================================
+        // LOAD SAVED TOKENS
+        // ==========================================
+        function loadSavedTokens() {
+            try {
+                const saved = localStorage.getItem('ff_tokens');
+                if (saved) {
+                    const tokens = JSON.parse(saved);
+                    const container = document.getElementById('quickTokens');
+                    
+                    // Keep the label
+                    const label = container.querySelector('span');
+                    container.innerHTML = '';
+                    container.appendChild(label);
+                    
+                    tokens.slice(-5).forEach(t => {
+                        const chip = document.createElement('span');
+                        chip.className = 'token-chip';
+                        chip.textContent = t.substring(0, 12) + '...';
+                        chip.onclick = () => {
+                            document.getElementById('tokenInput').value = t;
+                            addLog('Đã điền token từ lịch sử', 'info');
+                        };
+                        container.appendChild(chip);
+                    });
+                }
+            } catch (e) {}
+        }
+        
+        function saveToken() {
+            const token = document.getElementById('tokenInput').value.trim();
+            if (!token) {
+                addLog('⚠️ Không có token để lưu!', 'warning');
+                return;
+            }
+            
+            try {
+                let tokens = JSON.parse(localStorage.getItem('ff_tokens') || '[]');
+                if (!tokens.includes(token)) {
+                    tokens.push(token);
+                    if (tokens.length > 20) tokens = tokens.slice(-20);
+                    localStorage.setItem('ff_tokens', JSON.stringify(tokens));
+                    addLog('✅ Đã lưu token thành công!', 'success');
+                    loadSavedTokens();
+                } else {
+                    addLog('ℹ️ Token đã có trong lịch sử', 'info');
+                }
+            } catch (e) {
+                addLog('❌ Lỗi lưu token: ' + e.message, 'error');
+            }
+        }
+        
+        // ==========================================
+        // RUN BOT
+        // ==========================================
+        async function runBot(event) {
+            event.preventDefault();
+            
+            if (isRunning) {
+                addLog('⏳ Bot đang chạy, vui lòng đợi...', 'warning');
+                return;
+            }
+            
+            // Get data
+            const token = document.getElementById('tokenInput').value.trim();
+            const openid = document.getElementById('openidInput').value.trim();
+            const uid = document.getElementById('uidInput').value.trim();
+            const password = document.getElementById('passInput').value.trim();
+            const platform = document.getElementById('platformSelect').value;
+            
+            // Check which tab is active
+            const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+            
+            // Validate
+            if (activeTab === 'token' && !token) {
+                addLog('❌ Vui lòng nhập Access Token!', 'error');
+                return;
+            }
+            
+            if (activeTab === 'guest' && (!uid || !password)) {
+                addLog('❌ Vui lòng nhập Guest UID và Password!', 'error');
+                return;
+            }
+            
+            // Save token if in token mode
+            if (activeTab === 'token' && token) {
+                saveToken();
+            }
+            
+            // Disable button
+            isRunning = true;
+            const btn = document.getElementById('runBtn');
+            btn.disabled = true;
+            btn.classList.add('loading');
+            
+            addLog('🚀 Đang khởi chạy bot...', 'info');
+            addLog(`📌 Mode: ${activeTab.toUpperCase()}`, 'info');
+            
+            // Build data for backend
+            const data = {
+                mode: activeTab,
+                token: token,
+                openid: openid,
+                uid: uid,
+                password: password,
+                platform: platform
+            };
+            
+            try {
+                // Gọi API backend (sẽ chạy Python)
+                const response = await fetch('/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    const err = await response.text();
+                    throw new Error(err);
+                }
+                
+                // Đọc stream response
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.trim()) {
+                            try {
+                                const msg = JSON.parse(line);
+                                addLog(msg.message, msg.type || 'info');
+                            } catch (e) {
+                                // Nếu không parse được JSON thì in raw
+                                if (line.trim()) addLog(line.trim(), 'info');
+                            }
+                        }
+                    }
+                }
+                
+                addLog('✅ Bot đã hoàn thành!', 'success');
+                
+            } catch (error) {
+                addLog('❌ Lỗi: ' + error.message, 'error');
+                addLog('💡 Hướng dẫn: Chạy backend bằng "python app.py" trước!', 'warning');
+            }
+            
+            // Enable button
+            isRunning = false;
+            btn.disabled = false;
+            btn.classList.remove('loading');
+        }
+        
+        // ==========================================
+        // KEYBOARD SHORTCUTS
+        // ==========================================
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+Enter to run
+            if (e.ctrlKey && e.key === 'Enter') {
+                document.getElementById('botForm').dispatchEvent(new Event('submit'));
+            }
+        });
+        
+        // ==========================================
+        // INIT
+        // ==========================================
+        loadSavedTokens();
+        addLog('🔥 Chào mừng! Nhập token và nhấn "CHẠY BOT"', 'info');
+        addLog('💡 Nhấn Ctrl+Enter để chạy nhanh', 'info');
+        
+        // Auto-detect token from URL params
+        const params = new URLSearchParams(window.location.search);
+        const tokenParam = params.get('token');
+        if (tokenParam) {
+            document.getElementById('tokenInput').value = tokenParam;
+            addLog('✅ Đã nhận token từ URL', 'success');
+        }
+        
+        console.log('%c🔥 Free Fire Bot v3.0', 'font-size:20px; color:#ff4500; font-weight:bold;');
+        console.log('%cMade with ❤️ by Unknown', 'font-size:12px; color:#888;');
+    </script>
+</body>
+</html>
